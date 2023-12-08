@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Proiect_TrutaDiana.DTOs;
+using System.Reflection;
 
 namespace Proiect_TrutaDiana.Models
 {
@@ -11,6 +12,14 @@ namespace Proiect_TrutaDiana.Models
         public Guid RecipeID { get; set; }
         public Recipe Recipe { get; set; }
 
-
+        public IngredientDTO ToIngredientDTO()
+        {
+            return new IngredientDTO
+            {
+                Name = Name,
+                Amount = Amount,
+                IsLiquid = IsLiquid,
+            };
+        }
     }
 }

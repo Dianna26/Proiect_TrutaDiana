@@ -1,17 +1,30 @@
-﻿using Proiect_TrutaDiana.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Proiect_TrutaDiana.Models;
 
 namespace Proiect_TrutaDiana.Repositories
 {
     public class NutritionalValuesRepository
     {
-        public NutritionalValues GetNutritionalValues(Guid recipeID, CookBookContext context)
+        public async Task<NutritionalValues> GetNutritionalValues(Guid recipeID, CookBookContext context)
         {
-            return context.NutritionalValues.Where(i => i.RecipeID == recipeID).FirstOrDefault();
+            return await context.NutritionalValues.Where(i => i.RecipeID == recipeID).FirstOrDefaultAsync();
         }
 
-        public void AddNutritionalValues(NutritionalValues nutritionalValues, CookBookContext context)
+        public async Task AddNutritionalValues(NutritionalValues nutritionalValues, CookBookContext context)
         {
-            context.NutritionalValues.Add(nutritionalValues);
+            await context.NutritionalValues.AddAsync(nutritionalValues);
+        }
+
+        public async Task<NutritionalValues> UpdateNutritionalValues(NutritionalValues nutritionalValues, CookBookContext context)
+        {
+            context.NutritionalValues.Update(nutritionalValues);
+
+            return await GetNutritionalValues(nutritionalValues.RecipeID, context);
+        }
+
+        public void DeleteNutritionalValues(NutritionalValues nutritionalValues, CookBookContext context)
+        {
+            context.NutritionalValues.Remove(nutritionalValues);
         }
     }
 }

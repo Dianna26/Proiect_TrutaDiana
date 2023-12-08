@@ -1,48 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Proiect_TrutaDiana.DTOs;
 using Proiect_TrutaDiana.Models;
 using Proiect_TrutaDiana.Repositories;
 
 namespace Proiect_TrutaDiana.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/[controller]")]
     [ApiController]
     public class RecipesController : ControllerBase
     {
         private readonly CookBookContext _context;
         private RecipesRepository _recipesRepository;
-      
+        private IngredientsRepository _ingredientsRepository;
+        private NutritionalValuesRepository _nutritionalValuesRepository;
 
-        public RecipesController(CookBookContext context)
+        public RecipesController(CookBookContext context, RecipesRepository recipesRepository, IngredientsRepository ingredientsRepository, NutritionalValuesRepository nutritionalValuesRepository)
         {
             _context = context;
+            _recipesRepository = recipesRepository;
+            _ingredientsRepository = ingredientsRepository;
+            _nutritionalValuesRepository = nutritionalValuesRepository;
         }
 
-        // GET: api/Recipes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipes()
+        public async Task<ActionResult<List<Recipe>>> GetRecipes()
         {
-          if (_context.Recipes == null)
-          {
-              return NotFound();
-          }
-            return await _context.Recipes.ToListAsync();
+            if (_context == null || _recipesRepository == null)
+            {
+                return Problem("Context and/or Repository not initialized");
+            }
+
+            return await _recipesRepository.GetRecipes(_context);
         }
 
-        // GET: api/Recipes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Recipe>> GetRecipe(Guid id)
         {
-          if (_context.Recipes == null)
-          {
-              return NotFound();
-          }
-            var recipe = await _context.Recipes.FindAsync(id);
+            if (_context == null || _recipesRepository == null)
+            {
+                return Problem("Context and/or Repository not initialized");
+            }
+
+            var recipe = await _recipesRepository.GetRecipe(id, _context);
 
             if (recipe == null)
             {
@@ -52,53 +51,34 @@ namespace Proiect_TrutaDiana.Controllers
             return recipe;
         }
 
-        // PUT: api/Recipes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRecipe(Guid id, Recipe recipe)
+        public async Task<IActionResult> UpdateRecipe(Guid id, RecipeUpdateDTO recipeUpdateDTO)
         {
-            if (id != recipe.ID)
-            {
-                return BadRequest();
-            }
+            var recipeToUpdate = await _recipesRepository.GetRecipe(id, _context);
 
-            _context.Entry(recipe).State = EntityState.Modified;
+            await _recipesRepository.UpdateRecipe(recipeToUpdate, recipeUpdateDTO.ToRecipe(), _context);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RecipeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var updated = await _recipesRepository.GetRecipe(id, _context);
 
-            return NoContent();
+            return Ok(recipeUpdateDTO.ToRecipeUpdateDTO(updated));
         }
 
-        // POST: api/Recipes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Recipe>> PostRecipe(Recipe recipe)
+        public async Task<ActionResult<Recipe>> AddRecipe(RecipeDTO recipeDTO)
         {
-          if (_context.Recipes == null)
-          {
-              return Problem("Entity set 'CookBookContext.Recipes'  is null.");
-          }
-            _context.Recipes.Add(recipe);
+            if (_context == null || _recipesRepository == null)
+            {
+                return Problem("Context and/or Repository not initialized");
+            }
+
+            var recipe = recipeDTO.ToRecipe();
+
+            await _recipesRepository.AddRecipe(recipe, _ingredientsRepository, _nutritionalValuesRepository, _context);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRecipe", new { id = recipe.ID }, recipe);
         }
 
-        // DELETE: api/Recipes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRecipe(Guid id)
         {
@@ -116,11 +96,6 @@ namespace Proiect_TrutaDiana.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool RecipeExists(Guid id)
-        {
-            return (_context.Recipes?.Any(e => e.ID == id)).GetValueOrDefault();
         }
     }
 }
