@@ -13,18 +13,26 @@ namespace Proiect_TrutaDiana.Repositories
         public async Task AddNutritionalValues(NutritionalValues nutritionalValues, CookBookContext context)
         {
             await context.NutritionalValues.AddAsync(nutritionalValues);
+            await context.SaveChangesAsync();
         }
 
-        public async Task<NutritionalValues> UpdateNutritionalValues(NutritionalValues nutritionalValues, CookBookContext context)
+        public async Task<NutritionalValues> UpdateNutritionalValues(NutritionalValues nutritionalValues, NutritionalValues updated, CookBookContext context)
         {
-            context.NutritionalValues.Update(nutritionalValues);
+            nutritionalValues.Calories = updated.Calories;
+            nutritionalValues.Proteins = updated.Proteins;
+            nutritionalValues.Carbohydrates = updated.Carbohydrates;
+            nutritionalValues.Fats = updated.Fats;
 
+            context.NutritionalValues.Update(nutritionalValues);
+            await context.SaveChangesAsync();
             return await GetNutritionalValues(nutritionalValues.RecipeID, context);
+
         }
 
-        public void DeleteNutritionalValues(NutritionalValues nutritionalValues, CookBookContext context)
+        public async Task DeleteNutritionalValues(NutritionalValues nutritionalValues, CookBookContext context)
         {
             context.NutritionalValues.Remove(nutritionalValues);
+            await context.SaveChangesAsync();
         }
     }
 }

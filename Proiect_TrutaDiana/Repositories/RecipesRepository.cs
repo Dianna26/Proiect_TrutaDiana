@@ -56,9 +56,10 @@ namespace Proiect_TrutaDiana.Repositories
             await context.SaveChangesAsync();
         }
 
-        public void DeleteRecipe(Recipe recipe, CookBookContext context)
+        public async Task DeleteRecipe(Recipe recipe, CookBookContext context)
         {
             context.Recipes.Remove(recipe);
+            await context.SaveChangesAsync();
         }
     }
 }

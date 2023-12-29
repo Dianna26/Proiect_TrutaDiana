@@ -19,6 +19,7 @@ builder.Services.AddScoped<IngredientsRepository>();
 
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
 
 var app = builder.Build();
 
@@ -34,5 +35,12 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(builder =>
+{
+    builder.AllowAnyHeader();
+    builder.AllowAnyMethod();
+    builder.AllowAnyOrigin();
+});
 
 app.Run();

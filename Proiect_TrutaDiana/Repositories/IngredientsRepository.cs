@@ -17,6 +17,13 @@ namespace Proiect_TrutaDiana.Repositories
         public async Task AddIngredients(List<Ingredient> ingredients, CookBookContext context)
         {
             await context.Ingredients.AddRangeAsync(ingredients);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task AddIngredient(Ingredient ingredient, CookBookContext context)
+        {
+            await context.Ingredients.AddAsync(ingredient);
+            await context.SaveChangesAsync();
         }
 
         public async Task UpdateIngredient(Ingredient ingredient, Ingredient updated, CookBookContext context)
@@ -29,9 +36,10 @@ namespace Proiect_TrutaDiana.Repositories
             await context.SaveChangesAsync();
         }
 
-        public void DeleteIngredient(Ingredient ingredient, CookBookContext context)
+        public async Task DeleteIngredient(Ingredient ingredient, CookBookContext context)
         {
             context.Ingredients.Remove(ingredient);
+            await context.SaveChangesAsync();
         }
     }
 }
