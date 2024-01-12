@@ -16,6 +16,7 @@ namespace Proiect_TrutaDiana.Models
         {
             return new IngredientDTO
             {
+                ID = ID,
                 Name = Name,
                 Amount = Amount,
                 IsLiquid = IsLiquid,

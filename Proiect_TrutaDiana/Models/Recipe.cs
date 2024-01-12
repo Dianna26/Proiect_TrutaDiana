@@ -1,4 +1,6 @@
-﻿namespace Proiect_TrutaDiana.Models
+﻿using Proiect_TrutaDiana.DTOs;
+
+namespace Proiect_TrutaDiana.Models
 {
     public class Recipe
     {
@@ -12,5 +14,4 @@
         public int DifficultyID { get; set; }
         public Difficulty Difficulty { get; set; }
     }
-
 }

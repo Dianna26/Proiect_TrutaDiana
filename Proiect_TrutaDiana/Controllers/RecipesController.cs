@@ -52,15 +52,16 @@ namespace Proiect_TrutaDiana.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRecipe(Guid id, RecipeUpdateDTO recipeUpdateDTO)
+        public async Task<IActionResult> UpdateRecipe(Guid id, RecipeEditDTO recipeEditDTO)
         {
             var recipeToUpdate = await _recipesRepository.GetRecipe(id, _context);
 
-            await _recipesRepository.UpdateRecipe(recipeToUpdate, recipeUpdateDTO.ToRecipe(), _context);
+            await _recipesRepository.UpdateRecipe(recipeToUpdate, recipeEditDTO.ToRecipe(recipeToUpdate), _ingredientsRepository, _nutritionalValuesRepository, _context);
 
             var updated = await _recipesRepository.GetRecipe(id, _context);
+    
 
-            return Ok(recipeUpdateDTO.ToRecipeUpdateDTO(updated));
+            return Ok(recipeEditDTO.ToRecipeEditDTO(updated));
         }
 
         [HttpPost]

@@ -21,6 +21,18 @@ namespace Proiect_TrutaDiana.Controllers
             _ingredientsRepository = ingredientsRepository;
         }
 
+
+        [HttpGet]
+        public async Task<ActionResult<List<Ingredient>>> GetRecipes()
+        {
+            if (_context == null || _ingredientsRepository == null)
+            {
+                return Problem("Context and/or Repository not initialized");
+            }
+
+           return await _ingredientsRepository.GetIngredientsAll(_context);
+        }
+
         [HttpGet("ingredients/{recipeId}")]
         public async Task<ActionResult<List<IngredientDTO>>> GetIngredients(Guid recipeId)
         {
@@ -72,7 +84,7 @@ namespace Proiect_TrutaDiana.Controllers
 
             await _ingredientsRepository.UpdateIngredient(ingredient, ingredientDTO.ToIngredient(), _context);
 
-            var updated = await _ingredientsRepository.GetIngredients(id, _context);
+             await _ingredientsRepository.GetIngredients(id, _context);
 
             return Ok();
         }
@@ -89,6 +101,7 @@ namespace Proiect_TrutaDiana.Controllers
             ingredient.RecipeID = id;
 
             await _ingredientsRepository.AddIngredient(ingredient, _context);
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetIngredient", new { id = ingredient.ID }, ingredient);

@@ -30,7 +30,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
@@ -38,9 +38,11 @@ app.MapControllers();
 
 app.UseCors(builder =>
 {
+    //builder.WithOrigins("http://192.168.0.115:3000");
+    builder.WithOrigins("*");
     builder.AllowAnyHeader();
     builder.AllowAnyMethod();
-    builder.AllowAnyOrigin();
+     builder.AllowAnyOrigin();
 });
 
 app.Run();

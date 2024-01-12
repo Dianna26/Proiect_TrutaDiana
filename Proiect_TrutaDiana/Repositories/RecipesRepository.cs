@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
+using Proiect_TrutaDiana.DTOs;
 using Proiect_TrutaDiana.Models;
 
 namespace Proiect_TrutaDiana.Repositories
@@ -36,6 +37,7 @@ namespace Proiect_TrutaDiana.Repositories
 
             foreach (var ingredient in ingredientList)
             {
+                ingredient.ID = Guid.NewGuid();
                 ingredient.RecipeID = recipe.ID;
             }
 
@@ -45,7 +47,7 @@ namespace Proiect_TrutaDiana.Repositories
             await nutritionalValuesRepository.AddNutritionalValues(recipe.NutritionalValues, context);
         }
 
-        public async Task UpdateRecipe(Recipe recipe, Recipe updated, CookBookContext context)
+        public async Task UpdateRecipe(Recipe recipe, Recipe updated, IngredientsRepository ingredientsRepository, NutritionalValuesRepository nutritionalValuesRepository, CookBookContext context)
         {
             recipe.Name = updated.Name;
             recipe.Steps = updated.Steps;

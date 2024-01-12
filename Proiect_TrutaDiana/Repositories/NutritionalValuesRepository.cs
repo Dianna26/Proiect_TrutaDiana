@@ -12,6 +12,7 @@ namespace Proiect_TrutaDiana.Repositories
 
         public async Task AddNutritionalValues(NutritionalValues nutritionalValues, CookBookContext context)
         {
+            nutritionalValues.ID = Guid.NewGuid();
             await context.NutritionalValues.AddAsync(nutritionalValues);
             await context.SaveChangesAsync();
         }

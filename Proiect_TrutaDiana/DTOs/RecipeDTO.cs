@@ -64,4 +64,39 @@ namespace Proiect_TrutaDiana.DTOs
             };
         }
     }
+
+    public class RecipeEditDTO
+    {
+        public Guid ID { get; set; }
+
+        public string Name { get; set; }
+        public string Steps { get; set; }
+        public int Portions { get; set; }
+        public int DifficultyID { get; set; }
+
+        public Recipe ToRecipe(Recipe existingRecipe)
+        {
+
+            existingRecipe.Name = Name;
+            existingRecipe.Steps = Steps;
+            existingRecipe.Portions = Portions;
+            existingRecipe.DifficultyID = DifficultyID;
+         
+            return existingRecipe;
+        }
+
+        public RecipeEditDTO ToRecipeEditDTO(Recipe recipe)
+        {
+
+            return new RecipeEditDTO
+            {
+                ID = recipe.ID,
+                Name = recipe.Name,
+                Steps = recipe.Steps,
+                Portions = recipe.Portions,
+                DifficultyID = recipe.DifficultyID
+
+            };
+        }
+    }
 }
